@@ -19,9 +19,39 @@ const generateState = () => {
 export default function App() {
   const [state, setState] = React.useState(generateState());
 
+  const copyState = (object: number[][]) => {
+    return JSON.parse(JSON.stringify(object));
+  };
+
   const onChangeValue = (rowIndex: number, colIndex: number, val: number) => {
     setState((currentState) => {
       currentState[colIndex][rowIndex] = val;
+      return copyState(currentState);
+    });
+  };
+
+  const onIncrementRow = (rowIndex: number, direction: 'up' | 'down') => {
+    setState((currentState) => {
+      for (let index = 0; index < NUMBER_OF_ROWS; index++) {
+        if (direction === 'up') {
+          currentState[rowIndex][index]++;
+        } else {
+          currentState[rowIndex][index]--;
+        }
+      }
+      return JSON.parse(JSON.stringify(currentState));
+    });
+  };
+
+  const onIncrementColumn = (colIndex: number, direction: 'up' | 'down') => {
+    setState((currentState) => {
+      for (let index = 0; index < NUMBER_OF_ROWS; index++) {
+        if (direction === 'up') {
+          currentState[index][colIndex]++;
+        } else {
+          currentState[index][colIndex]--;
+        }
+      }
       return JSON.parse(JSON.stringify(currentState));
     });
   };
@@ -34,6 +64,7 @@ export default function App() {
           rowIndex={index}
           rowValues={state[index]}
           onChangeValue={(row, col, val) => onChangeValue(row, col, val)}
+          onIncrementRow={(row, dir) => onIncrementRow(row, dir)}
         />
       );
     }
@@ -42,17 +73,32 @@ export default function App() {
 
   const generateHeaders = () => {
     const headers = [];
-    headers.push(<th className="tg-0lax">{}</th>);
+    headers.push(<th>{}</th>);
     for (let index = 0; index < NUMBER_OF_ROWS; index++) {
-      headers.push(<th className="tg-0lax">{index}</th>);
+      headers.push(
+        <th>
+          <button
+            className="button-style"
+            onClick={() => onIncrementColumn(index, 'up')}
+          >
+            +
+          </button>
+          <button
+            className="button-style"
+            onClick={() => onIncrementColumn(index, 'down')}
+          >
+            -
+          </button>
+        </th>
+      );
     }
-    headers.push(<th className="tg-0lax">{'TOTAL'}</th>);
+    headers.push(<th>{'TOTAL'}</th>);
     return headers;
   };
 
   const generateFooters = () => {
     const footers = [];
-    footers.push(<td className="tg-0lax">{'TOTAL'}</td>);
+    footers.push(<td className="bold">{'TOTAL'}</td>);
     const findSum = (colIndex: number) => {
       let sum = 0;
       for (let index = 0; index < NUMBER_OF_ROWS; index++) {
@@ -61,9 +107,9 @@ export default function App() {
       return sum;
     };
     for (let index = 0; index < NUMBER_OF_ROWS; index++) {
-      footers.push(<td className="tg-0lax">{findSum(index)}</td>);
+      footers.push(<td className="bold">{findSum(index)}</td>);
     }
-    footers.push(<td className="tg-0lax">{}</td>);
+    footers.push(<td>{}</td>);
     return footers;
   };
 
@@ -84,6 +130,7 @@ interface Row {
   rowValues: number[];
   rowIndex: number;
   onChangeValue: (rowIndex: number, colIndex: number, val: number) => void;
+  onIncrementRow: (rowIndex: number, direction: 'up' | 'down') => void;
 }
 
 const TableRow = (props: Row) => {
@@ -101,15 +148,27 @@ const TableRow = (props: Row) => {
         />
       );
     }
-    headers.push(<td>{props.rowValues.reduce((s, a) => (s = s + a))}</td>);
+    headers.push(
+      <td className="bold">{props.rowValues.reduce((s, a) => (s = s + a))}</td>
+    );
     return headers;
   };
-  const incrementRow = (direction: 'up' | 'down') => {};
+
   return (
     <tr>
-      <td className="tg-0lax">
-        <button>+</button>
-        <button>-</button>
+      <td>
+        <button
+          className="button-style"
+          onClick={() => props.onIncrementRow(props.rowIndex, 'up')}
+        >
+          +
+        </button>
+        <button
+          className="button-style"
+          onClick={() => props.onIncrementRow(props.rowIndex, 'down')}
+        >
+          -
+        </button>
       </td>
       {generateCells()}
     </tr>
@@ -139,10 +198,20 @@ const TableCell = (props: Cell) => {
   };
 
   return (
-    <td className="tg-0lax">
+    <td>
       {value}
-      <button onClick={() => incrementCell('up', value)}>+</button>
-      <button onClick={() => incrementCell('down', value)}>-</button>
+      <button
+        className="button-style"
+        onClick={() => incrementCell('up', value)}
+      >
+        +
+      </button>
+      <button
+        className="button-style"
+        onClick={() => incrementCell('down', value)}
+      >
+        -
+      </button>
     </td>
   );
 };
