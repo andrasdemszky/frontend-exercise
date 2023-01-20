@@ -183,32 +183,26 @@ interface Cell {
 }
 
 const TableCell = (props: Cell) => {
-  const [value, setValue] = React.useState<number>(0);
-
-  React.useEffect(() => {
-    setValue(props.cellValue);
-  }, [props.cellValue]);
-
   const incrementCell = (direction: 'up' | 'down', val: number) => {
     if (direction === 'up') {
       props.onChangeValue(props.colIndex, props.rowIndex, val + 1);
     } else {
-      props.onChangeValue(props.colIndex, props.rowIndex, val + 1);
+      props.onChangeValue(props.colIndex, props.rowIndex, val - 1);
     }
   };
 
   return (
     <td>
-      {value}
+      {props.cellValue}
       <button
         className="button-style"
-        onClick={() => incrementCell('up', value)}
+        onClick={() => incrementCell('up', props.cellValue)}
       >
         +
       </button>
       <button
         className="button-style"
-        onClick={() => incrementCell('down', value)}
+        onClick={() => incrementCell('down', props.cellValue)}
       >
         -
       </button>
