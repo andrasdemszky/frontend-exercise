@@ -10,7 +10,7 @@ const generateState = () => {
       state[rowIndex] = [];
     }
     for (let colIndex = 0; colIndex < NUMBER_OF_ROWS; colIndex++) {
-      state[colIndex][rowIndex] = 0;
+      state[rowIndex][colIndex] = 0;
     }
   }
   return state;
@@ -21,7 +21,7 @@ export default function App() {
 
   const onChangeValue = (rowIndex: number, colIndex: number, val: number) => {
     setState((currentState) => {
-      currentState[rowIndex][colIndex] = val;
+      currentState[colIndex][rowIndex] = val;
       return JSON.parse(JSON.stringify(currentState));
     });
   };
@@ -46,7 +46,25 @@ export default function App() {
     for (let index = 0; index < NUMBER_OF_ROWS; index++) {
       headers.push(<th className="tg-0lax">{index}</th>);
     }
+    headers.push(<th className="tg-0lax">{'TOTAL'}</th>);
     return headers;
+  };
+
+  const generateFooters = () => {
+    const footers = [];
+    footers.push(<td className="tg-0lax">{'TOTAL'}</td>);
+    const findSum = (colIndex: number) => {
+      let sum = 0;
+      for (let index = 0; index < NUMBER_OF_ROWS; index++) {
+        sum += state[index][colIndex];
+      }
+      return sum;
+    };
+    for (let index = 0; index < NUMBER_OF_ROWS; index++) {
+      footers.push(<td className="tg-0lax">{findSum(index)}</td>);
+    }
+    footers.push(<td className="tg-0lax">{}</td>);
+    return footers;
   };
 
   return (
@@ -56,6 +74,7 @@ export default function App() {
           <tr>{generateHeaders()}</tr>
         </thead>
         <tbody>{generateRows()}</tbody>
+        <tr>{generateFooters()}</tr>
       </table>
     </div>
   );
@@ -82,6 +101,7 @@ const TableRow = (props: Row) => {
         />
       );
     }
+    headers.push(<td>{props.rowValues.reduce((s, a) => (s = s + a))}</td>);
     return headers;
   };
   const incrementRow = (direction: 'up' | 'down') => {};
@@ -112,9 +132,9 @@ const TableCell = (props: Cell) => {
 
   const incrementCell = (direction: 'up' | 'down', val: number) => {
     if (direction === 'up') {
-      props.onChangeValue(props.rowIndex, props.colIndex, val + 1);
+      props.onChangeValue(props.colIndex, props.rowIndex, val + 1);
     } else {
-      props.onChangeValue(props.rowIndex, props.colIndex, val + 1);
+      props.onChangeValue(props.colIndex, props.rowIndex, val + 1);
     }
   };
 
