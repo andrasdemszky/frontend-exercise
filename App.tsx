@@ -64,6 +64,7 @@ export default function App() {
     for (let index = 0; index < NUMBER_OF_ROWS; index++) {
       rows.push(
         <TableRow
+          key={index}
           rowIndex={index}
           rowValues={state[index]}
           onChangeValue={(row, col, val) => onChangeValue(row, col, val)}
@@ -76,10 +77,10 @@ export default function App() {
 
   const generateHeaders = () => {
     const headers = [];
-    headers.push(<th>{}</th>);
+    headers.push(<th key={-1}>{}</th>);
     for (let index = 0; index < NUMBER_OF_ROWS; index++) {
       headers.push(
-        <th>
+        <th key={index}>
           <button
             className="button-style"
             onClick={() => onIncrementColumn(index, 'up')}
@@ -95,13 +96,17 @@ export default function App() {
         </th>
       );
     }
-    headers.push(<th>{'TOTAL'}</th>);
+    headers.push(<th key={'total'}>{'TOTAL'}</th>);
     return headers;
   };
 
   const generateFooters = () => {
     const footers = [];
-    footers.push(<td className="bold">{'TOTAL'}</td>);
+    footers.push(
+      <td key={'total'} className="bold">
+        {'TOTAL'}
+      </td>
+    );
     const findSum = (colIndex: number) => {
       let sum = 0;
       for (let index = 0; index < NUMBER_OF_ROWS; index++) {
@@ -110,9 +115,13 @@ export default function App() {
       return sum;
     };
     for (let index = 0; index < NUMBER_OF_ROWS; index++) {
-      footers.push(<td className="bold">{findSum(index)}</td>);
+      footers.push(
+        <td key={index} className="bold">
+          {findSum(index)}
+        </td>
+      );
     }
-    footers.push(<td>{}</td>);
+    footers.push(<td key={-1}>{}</td>);
     return footers;
   };
 
@@ -123,7 +132,9 @@ export default function App() {
           <tr>{generateHeaders()}</tr>
         </thead>
         <tbody>{generateRows()}</tbody>
-        <tr>{generateFooters()}</tr>
+        <tfoot>
+          <tr>{generateFooters()}</tr>
+        </tfoot>
       </table>
     </div>
   );
@@ -138,10 +149,11 @@ interface Row {
 
 const TableRow = (props: Row) => {
   const generateCells = () => {
-    const headers = [];
+    const cells = [];
     for (let index = 0; index < NUMBER_OF_ROWS; index++) {
-      headers.push(
+      cells.push(
         <TableCell
+          key={index}
           rowIndex={props.rowIndex}
           colIndex={index}
           cellValue={props.rowValues[index]}
@@ -151,15 +163,17 @@ const TableRow = (props: Row) => {
         />
       );
     }
-    headers.push(
-      <td className="bold">{props.rowValues.reduce((s, a) => (s = s + a))}</td>
+    cells.push(
+      <td key={'total'} className="bold">
+        {props.rowValues.reduce((s, a) => (s = s + a))}
+      </td>
     );
-    return headers;
+    return cells;
   };
 
   return (
     <tr>
-      <td>
+      <td key={-1}>
         <button
           className="button-style"
           onClick={() => props.onIncrementRow(props.rowIndex, 'up')}
