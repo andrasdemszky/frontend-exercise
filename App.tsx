@@ -25,34 +25,37 @@ export default function App() {
 
   const onChangeValue = (rowIndex: number, colIndex: number, val: number) => {
     setState((currentState) => {
-      currentState[colIndex][rowIndex] = val;
-      return copyState(currentState);
+      const newState = copyState(currentState);
+      newState[colIndex][rowIndex] = val;
+      return newState;
     });
   };
 
   const onIncrementRow = (rowIndex: number, direction: 'up' | 'down') => {
     setState((currentState) => {
+      const newState = copyState(currentState);
       for (let index = 0; index < NUMBER_OF_ROWS; index++) {
         if (direction === 'up') {
-          currentState[rowIndex][index]++;
+          newState[rowIndex][index]++;
         } else {
-          currentState[rowIndex][index]--;
+          newState[rowIndex][index]--;
         }
       }
-      return JSON.parse(JSON.stringify(currentState));
+      return newState;
     });
   };
 
   const onIncrementColumn = (colIndex: number, direction: 'up' | 'down') => {
     setState((currentState) => {
+      const newState = copyState(currentState);
       for (let index = 0; index < NUMBER_OF_ROWS; index++) {
         if (direction === 'up') {
-          currentState[index][colIndex]++;
+          newState[index][colIndex]++;
         } else {
-          currentState[index][colIndex]--;
+          newState[index][colIndex]--;
         }
       }
-      return JSON.parse(JSON.stringify(currentState));
+      return newState;
     });
   };
 
